@@ -1,34 +1,91 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import AppShell from './components/AppShell'
+import CalendarPage from './pages/CalendarPage'
+import DashboardPage from './pages/DashboardPage'
+import GoalsPage from './pages/GoalsPage'
+import TasksPage from './pages/TasksPage'
+import { useAppData } from './hooks/useAppData'
 import './App.css'
 
+const pages = [
+  {
+    id: 'calendar',
+    label: 'Calendar',
+    icon: '🗓️',
+    subtitle: 'Plan your days with clarity',
+  },
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: '📈',
+    subtitle: 'Track progress across horizons',
+  },
+  {
+    id: 'tasks',
+    label: 'Tasks',
+    icon: '✅',
+    subtitle: 'Capture actions and priorities',
+  },
+  {
+    id: 'goals',
+    label: 'Goals',
+    icon: '🎯',
+    subtitle: 'Shape your long-term vision',
+  },
+]
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [activePage, setActivePage] = useState('calendar')
+  const {
+    tasks,
+    goals,
+    taskCategories,
+    goalCategories,
+    taskCategoryNames,
+    goalCategoryNames,
+    addTask,
+    updateTask,
+    removeTask,
+    toggleTask,
+    addGoal,
+    updateGoal,
+    removeGoal,
+    addTaskCategory,
+    removeTaskCategory,
+    addGoalCategory,
+    removeGoalCategory,
+  } = useAppData()
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <AppShell pages={pages} activePage={activePage} onNavigate={setActivePage}>
+      {activePage === 'calendar' && <CalendarPage tasks={tasks} />}
+      {activePage === 'dashboard' && <DashboardPage tasks={tasks} goals={goals} />}
+      {activePage === 'tasks' && (
+        <TasksPage
+          tasks={tasks}
+          categories={taskCategories}
+          categoryNames={taskCategoryNames}
+          onAddTask={addTask}
+          onUpdateTask={updateTask}
+          onRemoveTask={removeTask}
+          onToggleTask={toggleTask}
+          onAddCategory={addTaskCategory}
+          onRemoveCategory={removeTaskCategory}
+        />
+      )}
+      {activePage === 'goals' && (
+        <GoalsPage
+          goals={goals}
+          categories={goalCategories}
+          categoryNames={goalCategoryNames}
+          onAddGoal={addGoal}
+          onUpdateGoal={updateGoal}
+          onRemoveGoal={removeGoal}
+          onAddCategory={addGoalCategory}
+          onRemoveCategory={removeGoalCategory}
+        />
+      )}
+    </AppShell>
   )
 }
 
